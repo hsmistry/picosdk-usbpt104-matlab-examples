@@ -52,8 +52,6 @@ Contributions are welcome. Please refer to our [guidelines for contributing](.gi
 
 See [LICENSE.md](LICENSE.md) for license terms. 
 
-*PicoScope* is a registered trademark of Pico Technology Ltd. 
-
 *MATLAB* is a registered trademark of The Mathworks, Inc.
 
 *Windows* is a registered trademark of Microsoft Corporation. 

@@ -149,7 +149,7 @@ if (~any(strcmp(usbpt104ConfigInfo.psTbxName, {usbpt104ConfigInfo.v.Name})))
     
     if (isempty(usbpt104ConfigInfo.psTbxFound))
         
-        warning('USBPT104ConfigConfig:PSTbxDirNotFound', 'PicoScope Support Toolbox directory not found.');
+        warning('USBPT104Config:PSTbxDirNotFound', 'PicoScope Support Toolbox directory not found.');
             
     end
     
@@ -159,7 +159,8 @@ end
 cd(usbpt104ConfigInfo.workingDir);
 
 %% Load Enumerations and Structure Information
-% Enumerations and structures are used by certain Intrument Driver functions.
+% Enumerations and structures can be used with function calls to the shared
+% library.
 
 % Find prototype file names based on architecture
 

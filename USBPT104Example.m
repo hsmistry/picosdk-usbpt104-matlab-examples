@@ -1,15 +1,15 @@
-%% USB PT-104 Platinum Resistance Temperature Data Logger MATLAB Example Script
+%% USB PT-104 Platinum Resistance Temperature Data Logger Example
 %
 % This script demonstrates how to:
 %
 % * Enumerate devices connected to the PC
-% * Open a connection to USB PT-104 data logger
+% * Open a connection to a USB PT-104 data logger
 % * Display unit information
-% * Set Mains rejection
+% * Set mains rejection
 % * Configure a channel
 % * Take readings
 % * Plot data
-% * Close a connection to the unit
+% * Close the connection to the unit
 %
 % Please refer to the
 % <https://www.picotech.com/download/manuals/usb-pt104-rtd-data-logger-programmers-guide.pdf PT-104 USB/Ethernet RTD Data Logger Programmer's Guide> for further information.
@@ -23,7 +23,7 @@ close all;
 clc;
 clear;
 
-disp('USB PT-104 Platinum Resistance Data Logger MATLAB Example')
+disp('USB PT-104 Platinum Resistance Data Logger Example')
 
 %% Load configuration information
 
@@ -89,7 +89,7 @@ fprintf('\nEnumerating units...\n');
 
 if (status.enumerateUnits == PicoStatus.PICO_OK)
    
-    fprintf('Details: %s', details);
+    fprintf('Details: %s\n', details);
     
 else
     
@@ -118,10 +118,37 @@ else
     error('USBPT104Example:OpenUnitError', 'Open unit status code: %d', status.openUnit);
     
 end
+
+%% Display unit information
+
+fprintf('\nUnit information:-\n\n');
+
+information = {'Driver version: ', 'USB Version: ', 'Hardware version: ', 'Variant: ', 'Batch/Serial: ', 'Cal. date: ', 'Kernel driver version: '};
+
+pRequiredSize = libpointer('int16Ptr', 0);
+
+status.unitInfo = zeros(length(information), 1, 'uint32');
+
+% Loop through each information type
+for n = 1:length(information)
+    
+    infoLine = blanks(100);
+
+    [status.unitInfo(n), infoLine1] = calllib('usbpt104', 'UsbPt104GetUnitInfo', handle, infoLine, length(infoLine), pRequiredSize, (n-1));
+    
+    if (status.unitInfo(n) == PicoStatus.PICO_OK)
+    
+        disp([information{n} infoLine1]);
+    
+    end
+    
+end
+
+fprintf('\n');
     
 %% Noise Rejection
 
-status.setMains = calllib('usbpt104', 'UsbPt104SetMains', handle, 0); % 0 for 50 kHz, 1 for 60 kHz
+status.setMains = calllib('usbpt104', 'UsbPt104SetMains', handle, 0); % 0 for 50 Hz, 1 for 60 Hz
 
 %% Set channel
 % Set channel 1 for a PT-100 sensor
@@ -137,6 +164,8 @@ pause(2) % Wait for device to make conversion before going on to get value or no
 % Retrieve filtered data value for channel 1.
 % The data value returned will be a scaled value (refer to the function
 % definition in the Programmer's Guide).
+
+disp('Collecting data...');
 
 % Define the number of samples to collect
 numSamples = 30;
@@ -161,6 +190,8 @@ for n = 1:numSamples
     pause(1);
     
 end
+
+disp('Data collection complete.');
 
 %% Process the data
 % In this example, the data is shown on a plot
@@ -188,4 +219,4 @@ calllib('usbpt104', 'UsbPt104CloseUnit', handle);
 
 %% Unload library
 
-unloadlibrary('usbpt104')
+unloadlibrary('usbpt104');
